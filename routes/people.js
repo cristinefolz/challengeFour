@@ -68,7 +68,16 @@ router.route('/people')
       if(err){
         return next(err);
       } else {
-        res.json(data)
+
+        var newArr = people.map(function(person){
+          return {
+          username: person.username,
+          img: person.img,
+          country: person.country, 
+          birth_date: person.birth_date,
+          }
+        });
+        res.json(newArr)
       }
     })
   });

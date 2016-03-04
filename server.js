@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var faker = require('faker');
+var moment = require('moment');
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/challangeFour');

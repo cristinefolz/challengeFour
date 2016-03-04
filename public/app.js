@@ -1,3 +1,4 @@
+
 {/* 
   HIERARCHY
 
@@ -8,25 +9,38 @@
 */}
 
 var PeopleApp = React.createClass({
+
+  propTypes: {    // propTypes are good to have
+    url: React.PropTypes.string.isRequired  // url is required property type for PeopleApp
+  },
+
   getInitialState: function() {
     return {
-
+      people: [],
     }
   },
-  loadPeopleFromServer: function() {
-    $.ajax({
 
+  loadPeopleFromServer: function() {
+    var self = this;
+    $.ajax({
+      url: this.props.url,
+      method: 'GET'
     }).done(function(data){
-      //data
+      console.log(data)
+      self.setState({
+        people: data
+      })
     })
   },
-  componentDidMount: function() {
+
+  componentDidMount: function() {  // returns of function will happen when component mounts to the page
     this.loadPeopleFromServer();
   },
+
   render: function() {
     return (
       <div>
-        <PeopleList/>
+        <PeopleList people={ this.state.people }/>
       </div>
       )
   }
@@ -34,7 +48,13 @@ var PeopleApp = React.createClass({
 
 var PeopleList = React.createClass({
   render: function() {
-    var person = "You will need to map through your data [this.props.people] here and create a <Person/> for each object";
+    console.log(this.props.people)
+    var person = this.props.people.map(function(p){
+      return <Person username={p.username} 
+                    img={p.img} 
+                    country={p.country} 
+                    birth_date={p.birth_date} />
+      })
     return (
       <div>
         { person }
@@ -50,11 +70,23 @@ var PeopleList = React.createClass({
   and calculate their age. Use this function to render the persons age.
 */}
 var Person = React.createClass({
-  render: function() {
+  getAge: function(age) {
+    return (new Date()).getYear() - (new Date(age)).getYear()
+  },
+  
+    // var bDate = this.props.birth_date.split("T").shift().toString();
+    // console.log(bDate);
+    // var age = moment().diff(bDate, 'years');
+    // console.log('Age is: ' + age);
+
+    render: function() {
     return (
       <div className="panel panel-default">
         <div classname="panel-body">
-          Persons name, age, etc...
+          <img src={ this.props.img } className="img-thumbnail" />
+          <p>{ this.props.username }</p>
+          <p>{ this.props.country }</p>
+          <p>{ this.getAge(this.props.birth_date) }</p>
         </div>
       </div>
       )
@@ -64,4 +96,6 @@ var Person = React.createClass({
 
 
 
-React.render(<PeopleApp url="" />, document.getElementById('react-container'));
+
+
+React.render(<PeopleApp url="/api/people/" />, document.getElementById('react-container'));
